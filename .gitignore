@@ -1,0 +1,19 @@
+_work/
+_preview/
+site/_assets_log.json
+.DS_Store
+site/_t7p_log.json
+site/_t7c_log.json
+# masters and full-size sources stay local: the page only loads the WebP copies, the web videos and these few files
+site/img/**/*.jpg
+site/img/**/*.png
+site/img/**/*.svg
+!site/img/more/*
+!site/img/badge.png
+!site/img/badge_outline.png
+site/video/*.jpg
+site/video/hero_portrait.mp4
+site/video/hero_landscape.mp4
+# the preview's votes stay private until go-live: the shared preview carries them encrypted (preview/data.enc.json)
+site/data/data.json
+site/img/stories/

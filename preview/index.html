@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>TPA X page preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=Barlow:wght@400;600;700&display=swap">
+<style>
+/* Shared preview of the TPA X page. A stand-in for the BeTheme header and footer around the real embed, behind a password:
+   the page data (the jurors' ballots) is stored encrypted and only decrypted in the browser with the right password. */
+:root{--chrome:#ffffff;--chrome-fg:#3a3d42;--chrome-muted:#6b6f76;--chrome-line:#e2e2df;--ground:#ecebe8;--ink:#0B0B0C;--panel:#141518;--line:#3a3d42;--red:#E11937;--soft:#b9bdc3;color-scheme:light}
+html,body{margin:0}
+body{background:var(--ground);color:var(--chrome-fg);font:14px/1.4 system-ui,-apple-system,'Segoe UI',sans-serif}
+.site-head{position:relative;z-index:30;height:64px;display:flex;align-items:center;gap:12px;background:var(--chrome);border-bottom:1px solid var(--chrome-line);padding:0 16px}
+.site-head b{font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.site-head span{font-size:11px;color:var(--chrome-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.site-head .brand{display:flex;flex-direction:column;min-width:0}
+.site-foot{padding:48px 16px 64px;text-align:center;color:var(--chrome-muted);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+[hidden]{display:none!important}
+
+.gate{box-sizing:border-box;min-height:calc(100svh - 65px);display:flex;align-items:center;justify-content:center;padding:32px 16px;background:var(--ink);color:#fff}
+.gate form{width:min(360px,100%);display:flex;flex-direction:column;gap:12px}
+.gate img{width:58px;height:auto;margin-bottom:6px}
+.gate h1{margin:0;font:800 40px/.95 'Barlow Condensed','Arial Narrow',sans-serif;text-transform:uppercase}
+.gate p{margin:0 0 10px;font:400 15px/1.45 'Barlow',system-ui,sans-serif;color:var(--soft)}
+.gate label{font:700 13px/1 'Barlow',system-ui,sans-serif;letter-spacing:.04em}
+.gate input{box-sizing:border-box;width:100%;height:50px;padding:0 14px;border:1px solid var(--line);border-radius:3px;background:var(--panel);color:#fff;font:16px/1 system-ui,-apple-system,sans-serif}
+.gate input:focus-visible{outline:3px solid var(--red);outline-offset:1px;border-color:transparent}
+.gate button{height:50px;border:0;border-radius:3px;background:var(--red);color:#fff;font:800 19px/1 'Barlow Condensed','Arial Narrow',sans-serif;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.gate button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.gate button:disabled{opacity:.6;cursor:progress}
+.gate .err{min-height:1.4em;margin:0;font:600 14px/1.4 'Barlow',system-ui,sans-serif;color:#ff8a9b}
+</style>
+</head>
+<body>
+<header class="site-head"><div class="brand"><b>Total Waterpolo</b><span>Site header from BeTheme</span></div></header>
+<section class="gate" id="gate" hidden>
+  <form id="gate-form" autocomplete="off">
+    <img src="../site/img/badge.png" alt="TPA X" width="136" height="119">
+    <h1>TPA X page preview</h1>
+    <p>Enter the password you were given to open the preview.</p>
+    <label for="pw">Password</label>
+    <input id="pw" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+    <p class="err" id="err" role="alert"></p>
+    <button type="submit" id="go">Open preview</button>
+  </form>
+</section>
+<main id="page" hidden><div id="tpax-x" data-offset="0"></div></main>
+<footer class="site-foot">Total Waterpolo · site footer (BeTheme)</footer>
+<script>
+(function () {
+  var V = '51', KEY = 'tpax-preview-pw';
+  var gate = document.getElementById('gate'), page = document.getElementById('page'), form = document.getElementById('gate-form');
+  var input = document.getElementById('pw'), err = document.getElementById('err'), btn = document.getElementById('go');
+  function bytes(b64) { var s = atob(b64), u = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+  // the data is AES-GCM encrypted with a key derived from the password (PBKDF2-SHA256); a wrong password fails the decryption
+  function unlock(pw) {
+    return fetch('data.enc.json?v=' + V, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('fetch'); return r.json(); }).then(function (box) {
+      return crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']).then(function (km) {
+        return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: bytes(box.salt), iterations: box.it, hash: 'SHA-256' }, km, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+      }).then(function (key) {
+        return crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(box.iv) }, key, bytes(box.ct));
+      });
+    }).then(function (plain) { return URL.createObjectURL(new Blob([plain], { type: 'application/json' })); });
+  }
+  var dataUrl = null;
+  function phase() { return location.hash === '#results' ? 'results' : 'vote'; }
+  function mount(first) {
+    var old = document.getElementById('tpax-x'), host = document.createElement('div');
+    host.id = 'tpax-x'; host.setAttribute('data-offset', '0'); host.setAttribute('data-phase', phase()); host.setAttribute('data-src', dataUrl);
+    old.parentNode.replaceChild(host, old);
+    var s = document.createElement('script'); s.src = '../site/tpax.js?v=' + V + (first ? '' : '&m=' + Date.now()); document.body.appendChild(s);
+    if (!first) window.scrollTo(0, 0);
+  }
+  function open(url) {
+    dataUrl = url; gate.hidden = true; page.hidden = false; mount(true);
+    window.addEventListener('hashchange', function () { mount(false); });
+  }
+  function ask() { gate.hidden = false; input.focus(); }
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault(); var pw = input.value.trim(); if (!pw) return;
+    btn.disabled = true; err.textContent = '';
+    unlock(pw).then(function (url) { try { sessionStorage.setItem(KEY, pw); } catch (e) {} open(url); }, function (e) {
+      btn.disabled = false;
+      err.textContent = e && e.message === 'fetch' ? 'The preview could not load. Check your connection and try again.' : 'That password doesn’t match. Check it and try again.';
+      input.select();
+    });
+  });
+  if (!window.crypto || !crypto.subtle) { ask(); err.textContent = 'This browser can’t open the preview. Try a current Chrome, Safari or Firefox.'; btn.disabled = true; return; }
+  var saved = null; try { saved = sessionStorage.getItem(KEY); } catch (e) {}
+  if (saved) unlock(saved).then(open, ask); else ask();   // the same tab doesn't ask twice
+})();
+</script>
+</body>
+</html>
