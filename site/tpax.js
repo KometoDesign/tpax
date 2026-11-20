@@ -401,7 +401,7 @@ return '<section class="tracker" aria-label="Results reveal and live tracker"><d
 '<div class="reveal"><span class="eyebrow">Results reveal · ' + e(longDay(D.resultsDate)) + '</span><strong><b>' + days + '</b> day' + (days === 1 ? '' : 's') + ' to go</strong>' +
 '<span class="reveal-cd">Winners, Total 7s and standings, all on one day</span></div>' +
 '<div class="trk-row">' + st(n, 'votes in') + st(w, 'women’s') + st(m, 'men’s') + '</div>' +
-'<ol class="road2"><li class="on"><b>Vote</b><span>Now</span></li><li class="next"><b>Results</b><span>21 December</span></li></ol>' +
+'<ol class="road2"><li class="on"><b>Vote</b><span>Now</span></li><li class="next"><b>Results</b><span>' + e(longDay(D.resultsDate)) + '</span></li></ol>' +
 '</div></section>';
 }
 function heroMedia() {
@@ -592,7 +592,7 @@ function how() {
 return '<section class="sec" id="tpx-how" aria-labelledby="tpx-how-h"><div class="wrap stack" style="gap:22px"><h2 class="h2" id="tpx-how-h">How it works</h2><ol class="steps">' +
 '<li><b>1</b><div><h3>The season</h3><p>' + e(D.season) + '. Club and national team.</p></div></li>' +
 '<li><b>2</b><div><h3>The vote</h3><p>Seven players, one per position: 3 points each. One Total Player: 5 more.</p></div></li>' +
-'<li><b>3</b><div><h3>The verdict</h3><p>Most points wins. Revealed on 21 December.</p></div></li></ol></div></section>';
+'<li><b>3</b><div><h3>The verdict</h3><p>Most points wins. Revealed on ' + e(longDay(D.resultsDate)) + '.</p></div></li></ol></div></section>';
 }
 function legacy() {
 var open = !!S.edOpen, n = (D.editions || []).length;
@@ -979,7 +979,7 @@ if (ro) ro.observe(stage);
 }
 function total7s() {
 var a = S.award, t = D.total7[a] || {}, lead = (D.total7Leader || {})[a];
-var body = Object.keys(t).length ? formation(t, lead, [a === 'w' ? 'Women’s' : 'Men’s', 'Total 7'], ['Season', D.season], 'Total Player') : '<div class="empty">The ' + awardWord(a) + ' Total 7 goes up on 21 December.</div>';
+var body = Object.keys(t).length ? formation(t, lead, [a === 'w' ? 'Women’s' : 'Men’s', 'Total 7'], ['Season', D.season], 'Total Player') : '<div class="empty">The ' + awardWord(a) + ' Total 7 goes up on ' + e(longDay(D.resultsDate)) + '.</div>';
 return '<section class="sec" id="tpx-total7" aria-labelledby="tpx-t7-h"><div class="wrap stack"><h2 class="h2" id="tpx-t7-h">The Total 7s</h2>' + seg('Award', '’s award') +
 '<div style="max-width:560px">' + body + '</div><span style="font-size:13px;color:#9aa0a6">Season ' + e(D.season) + '</span></div></section>';
 }
