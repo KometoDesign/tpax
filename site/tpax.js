@@ -104,7 +104,7 @@ var tabs = '<div class="vtabs" role="group" aria-label="Show votes">' + [['all',
 return '<button type="button" data-vf="' + t[0] + '" aria-pressed="' + (f === t[0]) + '">' + t[1] + '<span>' + t[2] + '</span></button>';
 }).join('') + '</div>';
 var cards = list.length ? list.map(voteCard).join('') :
-'<li class="hc on"><article class="hcard glass hc-empty"><span class="hc-id"><small>' + (f === 'women' ? 'Women’s award' : 'Men’s award') + '</small><strong>No votes yet</strong></span></article></li>';
+'<li class="hc on"><article class="hcard glass hc-empty"><span class="hc-id"><small>' + (f === 'women' ? 'Women’s award' : f === 'men' ? 'Men’s award' : 'The jury') + '</small><strong>' + (live().length ? 'No votes yet' : 'First votes coming soon') + '</strong></span></article></li>';
 return tabs + '<ul class="hrow" aria-label="Votes">' + cards + '</ul>';
 }
 function tpLine(b) {

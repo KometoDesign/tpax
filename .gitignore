@@ -15,5 +15,6 @@ site/video/*.jpg
 site/video/hero_portrait.mp4
 site/video/hero_landscape.mp4
 # the preview's votes stay private until go-live: the shared preview carries them encrypted (preview/data.enc.json)
-site/data/data.json
+site/data/preview.json
+# site/data/data.json is the PUBLIC data (build_data.py vote --prod): posted votes only, no running totals
 site/img/stories/
