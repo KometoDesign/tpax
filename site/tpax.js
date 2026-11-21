@@ -400,7 +400,7 @@ return '<section class="tracker" aria-label="Results reveal and live tracker"><d
 '<div class="trk-top"><span class="trk-live"><i aria-hidden="true"></i>Live</span></div>' +
 '<div class="reveal"><span class="eyebrow">Results reveal · ' + e(longDay(D.resultsDate)) + '</span><strong><b>' + days + '</b> day' + (days === 1 ? '' : 's') + ' to go</strong>' +
 '<span class="reveal-cd">Winners, Total 7s and standings, all on one day</span></div>' +
-'<div class="trk-row">' + st(n, 'votes in') + st(w, 'women’s') + st(m, 'men’s') + '</div>' +
+'<div class="trk-row">' + st(n, n === 1 ? 'vote in' : 'votes in') + st(w, 'women’s') + st(m, 'men’s') + '</div>' +
 '<ol class="road2"><li class="on"><b>Vote</b><span>Now</span></li><li class="next"><b>Results</b><span>' + e(longDay(D.resultsDate)) + '</span></li></ol>' +
 '</div></section>';
 }
