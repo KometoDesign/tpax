@@ -450,7 +450,7 @@ var state = function (g) { return X && g.id === X.id ? (phase() === 'results' ? 
 var ready = games.filter(function (g) { return g.a && g.b && team(g.a) && team(g.b); });
 var now = ready.filter(function (g) { return state(g) === 'live'; })[0];
 if (now) return now.id;
-var next = ready.filter(function (g) { return state(g) !== 'result' && state(g) !== 'draw'; })
+var next = ready.filter(function (g) { return state(g) !== 'result' && state(g) !== 'draw' && state(g) !== 'closed'; })
 .map(function (g, i) { return [g.date || '9999', i, g]; }).sort(function (x, y) { return x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : x[1] - y[1]; });
 return next.length ? next[0][2].id : null;
 }
@@ -501,21 +501,21 @@ if (!(A && B)) {
 var st0 = g.state === 'draw' ? 'Draw to come' : (g.date ? 'Next · ' + day(g.date) : (g.note || 'Next'));
 return '<li><div class="game off nt"><span class="yr">' + e(g.label) + '</span><span class="st">' + e(st0) + '</span></div></li>';
 }
-var open = S.open === g.id, done = g.state === 'result', live = g.state === 'live', ex = g.demo ? '<span class="ex">Example</span>' : '';
+var open = S.open === g.id, done = g.state === 'result', live = g.state === 'live', closed = g.state === 'closed', ex = g.demo ? '<span class="ex">Example</span>' : '';
 var head;
 if (done) {
 var aw = g.winner === g.a;
 head = '<span class="split' + (aw ? ' aw' : ' bw') + '" aria-hidden="true"><i style="width:' + g.pa + '%"></i></span>' +
 '<span class="yr' + (aw ? ' win' : '') + '">' + yl(A) + ex + '</span><span class="st pc"><b>' + g.pa + '%</b><b>' + g.pb + '%</b></span><span class="yr r' + (aw ? '' : ' win') + '">' + yl(B) + '</span>';
 } else {
-head = '<span class="yr">' + yl(A) + ex + '</span><span class="st">' + (live ? '<i class="lamp" aria-hidden="true"></i>Vote live' : e(g.date ? 'Next · ' + day(g.date) : 'Up next')) + '</span><span class="yr r">' + yl(B) + '</span>';
+head = '<span class="yr">' + yl(A) + ex + '</span><span class="st">' + (live ? '<i class="lamp" aria-hidden="true"></i>Vote live' : closed ? 'Poll closed' : e(g.date ? 'Next · ' + day(g.date) : 'Up next')) + '</span><span class="yr r">' + yl(B) + '</span>';
 }
 var gi = g.img || (done ? g.imgResult : g.imgFaceoff);
 var lab = (a === 'w' ? 'Women' : 'Men') + ' · ' + ({ qf: 'quarter-final ', sf: 'semi-final ', f: 'final', bf: 'bonus final' }[g.round] || '') + (g.round === 'qf' || g.round === 'sf' ? g.label.slice(-1) : '');
 var reel = open ? '<div class="reel">' + field(g, lab) +
 (done && g.ig ? '<a href="' + e(g.ig) + '" target="_blank" rel="noopener">Watch the reel on Instagram ↗</a>' : '') + '</div>' : '';
 var vote = live ? '<div class="vote-cta"><a class="vote-now" href="' + e(g.story || D.igStories || D.ig || 'https://www.instagram.com/') + '" target="_blank" rel="noopener" aria-label="Vote now: ' + e(A.year + ' v ' + B.year) + ' in our Instagram Story">' + IGI + '<b>Vote now</b></a><small>in our Instagram Story</small></div>' : '';
-var label = A.year + ' v ' + B.year + (done ? ', ' + g.pa + ' to ' + g.pb + ' percent' : live ? ', vote live' : ', up next');
+var label = A.year + ' v ' + B.year + (done ? ', ' + g.pa + ' to ' + g.pb + ' percent' : live ? ', vote live' : closed ? ', poll closed, result soon' : ', up next');
 return '<li><button type="button" class="game' + (done ? ' res' : live ? ' live' : ' up') + '" data-game="' + e(g.id) + '" aria-expanded="' + open + '" aria-label="' + e(label) + '">' +
 head + '<span class="sg" aria-hidden="true">' + (open ? '–' : '+') + '</span></button>' + reel + vote + '</li>';
 }).join('') + '</ul></div>';
