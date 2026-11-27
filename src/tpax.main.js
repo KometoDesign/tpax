@@ -548,7 +548,7 @@
         if (done) {   // decided: the bar becomes the vote split
           var aw = g.winner === g.a;
           head = '<span class="split' + (aw ? ' aw' : ' bw') + '" aria-hidden="true"><i style="width:' + g.pa + '%"></i></span>' +
-            '<span class="yr' + (aw ? ' win' : '') + '">' + yl(A) + ex + '</span><span class="st pc"><b>' + g.pa + '%</b><b>' + g.pb + '%</b></span><span class="yr r' + (aw ? '' : ' win') + '">' + yl(B) + '</span>';
+            '<span class="yr' + (aw ? ' win' : '') + '">' + yl(A) + ex + '</span><span class="st pc" style="left:clamp(130px,' + g.pa + '%,calc(100% - 130px))"><b>' + g.pa + '%</b><b>' + g.pb + '%</b></span><span class="yr r' + (aw ? '' : ' win') + '">' + yl(B) + '</span>';
         } else {
           head = '<span class="yr">' + yl(A) + ex + '</span><span class="st">' + (live ? '<i class="lamp" aria-hidden="true"></i>Vote live' : closed ? 'Poll closed' : e(g.date ? 'Next · ' + day(g.date) : 'Up next')) + '</span><span class="yr r">' + yl(B) + '</span>';
         }
