@@ -1178,7 +1178,11 @@
       if (!g.liveFrom || g.state === 'result' || g.state === 'draw') return;
       var f = Date.parse(g.liveFrom), t = Date.parse(g.liveTo);
       if (n >= f && n < t) g.state = 'live'; else if (n >= t) g.state = 'closed'; }); }); })();
-    if (!S.award) S.award = live('w').length || !live('m').length ? 'w' : 'm';   // women first, unless they have no votes yet
+    // the H2H toggle opens on the live game, else the next upcoming one: the Women/Men tab follows it (autoGame then expands the game)
+    var hb = null; ['w', 'm'].forEach(function (a) { (D.h2h[a] || []).forEach(function (g) {
+      if (!(g.a && g.b && team(g.a) && team(g.b)) || g.state === 'result' || g.state === 'draw' || g.state === 'closed') return;
+      var k = (g.state === 'live' ? '0' : '1') + (g.date || '9999'); if (!hb || k < hb.k) hb = { k: k, a: a }; }); });
+    if (!S.award) S.award = hb ? hb.a : live('w').length || !live('m').length ? 'w' : 'm';   // else women first, unless they have no votes yet
     render();
   }
   var KEY = 'tpax-x-data';
