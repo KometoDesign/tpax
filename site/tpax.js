@@ -1092,6 +1092,10 @@ Array.prototype.forEach.call(links, function (a, i) { a.setAttribute('aria-curre
 }, { passive: true });
 function start(data) {
 D = data;
+(function () { var n = Date.now(); ['w', 'm'].forEach(function (a) { (D.h2h[a] || []).forEach(function (g) {
+if (!g.liveFrom || g.state === 'result' || g.state === 'draw') return;
+var f = Date.parse(g.liveFrom), t = Date.parse(g.liveTo);
+if (n >= f && n < t) g.state = 'live'; else if (n >= t) g.state = 'closed'; }); }); })();
 if (!S.award) S.award = live('w').length || !live('m').length ? 'w' : 'm';
 render();
 }
